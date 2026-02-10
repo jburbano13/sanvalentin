@@ -1,1 +1,166 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>¿Quieres ser mi San Valentín?</title>
+  <style>
+    :root { --bg1:#0b1020; --bg2:#2a1146; --card:#ffffff12; --txt:#f6f3ff; --muted:#cdbcf7; }
+    * { box-sizing: border-box; }
+    body{
+      margin:0; min-height:100vh; display:grid; place-items:center;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+      color:var(--txt);
+      background: radial-gradient(900px 600px at 20% 10%, #ff4d8d30, transparent 60%),
+                  radial-gradient(800px 500px at 80% 80%, #7c4dff30, transparent 60%),
+                  linear-gradient(160deg, var(--bg1), var(--bg2));
+      overflow:hidden;
+    }
+    .card{
+      width:min(560px, 92vw);
+      padding:28px 22px;
+      background:var(--card);
+      border:1px solid #ffffff25;
+      border-radius:22px;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 18px 50px #00000055;
+      text-align:center;
+      position:relative;
+    }
+    h1{ margin:0 0 10px; font-size:clamp(22px, 4vw, 30px); }
+    p{ margin:0 0 18px; color:var(--muted); font-size:clamp(14px, 2.5vw, 16px); line-height:1.35; }
+    .names{ font-weight:700; color:#fff; }
+    .buttons{
+      display:flex; gap:12px; justify-content:center; flex-wrap:wrap;
+      margin-top:18px;
+      position:relative;
+      min-height:52px;
+    }
+    button{
+      border:none;
+      padding:14px 18px;
+      border-radius:14px;
+      font-weight:800;
+      font-size:16px;
+      cursor:pointer;
+      transition: transform .08s ease, filter .12s ease;
+      user-select:none;
+    }
+    button:active{ transform: scale(0.98); }
+    #yes{
+      background: linear-gradient(135deg, #ff3d7f, #ff8bb0);
+      color:#21000f;
+      box-shadow: 0 10px 25px #ff3d7f35;
+    }
+    #no{
+      background: #ffffff18;
+      color: #ffffffd8;
+      border:1px solid #ffffff30;
+      position:relative;
+    }
+    .footer{
+      margin-top:18px;
+      font-size:13px;
+      color:#ffffffb0;
+    }
+    .tag{
+      display:inline-block;
+      padding:6px 10px;
+      border:1px solid #ffffff2a;
+      border-radius:999px;
+      background:#ffffff10;
+      margin-bottom:14px;
+      font-size:13px;
+      color:#ffffffcc;
+    }
+    .modal{
+      position:fixed; inset:0; display:none; place-items:center;
+      background:#0000007a;
+      padding:18px;
+    }
+    .modal .inner{
+      width:min(520px, 92vw);
+      background: #0f1730;
+      border:1px solid #ffffff25;
+      border-radius:20px;
+      padding:22px;
+      text-align:center;
+      box-shadow: 0 18px 60px #00000080;
+    }
+    .big{
+      font-size:22px; font-weight:900; margin:0 0 10px;
+    }
+    .hearts{
+      font-size:28px; margin:10px 0 14px;
+      filter: drop-shadow(0 8px 16px #ff3d7f33);
+    }
+    .close{
+      margin-top:10px;
+      background:#ffffff18; color:#fff; border:1px solid #ffffff30;
+    }
+  </style>
+</head>
+<body>
+  <div class="card" id="card">
+    <div class="tag">💌 Invitación oficial</div>
+    <h1>¿Quieres ser mi San Valentín? 💘</h1>
+    <p>
+      <span class="names" id="toName">Pomodorino</span>, no es solo por el 14…<br/>
+      es porque contigo todo se siente como hogar.
+    </p>
+
+    <div class="buttons" id="btnWrap">
+      <button id="yes">Sí, obvio 💞</button>
+      <button id="no">No 😶</button>
+    </div>
+
+    <div class="footer">
+      P.D.: si te da curiosidad… el botón “No” es tímido 🙈
+    </div>
+  </div>
+
+  <div class="modal" id="modal">
+    <div class="inner">
+      <div class="big">¡SÍÍÍ! 🥹💖</div>
+      <div class="hearts">💘 💘 💘</div>
+      <p id="resultText" style="margin:0;color:#cdbcf7;">
+        Listo, ya eres oficialmente mi San Valentín.
+      </p>
+      <button class="close" id="close">Cerrar</button>
+    </div>
+  </div>
+
+  <script>
+    // Personaliza el nombre desde el link: ?name=Martina
+    const params = new URLSearchParams(location.search);
+    const name = params.get("name");
+    if (name) document.getElementById("toName").textContent = name;
+
+    const yes = document.getElementById("yes");
+    const no = document.getElementById("no");
+    const modal = document.getElementById("modal");
+    const close = document.getElementById("close");
+
+    yes.addEventListener("click", () => { modal.style.display = "grid"; });
+    close.addEventListener("click", () => modal.style.display = "none");
+    modal.addEventListener("click", (e) => { if (e.target === modal) modal.style.display = "none"; });
+
+    // Botón NO "se escapa"
+    const wrap = document.getElementById("btnWrap");
+    function moveNo(){
+      const wrapRect = wrap.getBoundingClientRect();
+      const noRect = no.getBoundingClientRect();
+      const maxX = wrapRect.width - noRect.width;
+      const maxY = 90;
+      const x = Math.max(0, Math.min(maxX, Math.random() * maxX));
+      const y = (Math.random() * maxY) - 20;
+      no.style.transform = `translate(${x}px, ${y}px)`;
+      no.style.filter = "brightness(1.1)";
+      setTimeout(()=> no.style.filter = "", 120);
+    }
+    no.addEventListener("mouseenter", moveNo);
+    no.addEventListener("click", (e) => { e.preventDefault(); moveNo(); });
+  </script>
+</body>
+</html>
 
